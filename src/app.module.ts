@@ -8,6 +8,8 @@ import { ClientModule } from './client/client.module';
 import { Client } from './client/entities/client.entity';
 
 import { BrokerModule } from './broker/broker.module';
+
+import { RequestModule } from './request/request.module';
 import { ContractModule } from './contract/contract.module';
 import { ProviderModule } from './provider/provider.module';
 import { ChatModule } from './chat/chat.module';
@@ -32,6 +34,7 @@ import { PaymentModule } from './payment/payment.module';
     AuthModule,
     ClientModule,
     BrokerModule,
+    RequestModule,
     ContractModule,
     ProviderModule,
     ChatModule,

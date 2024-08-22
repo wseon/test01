@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany } from 'typeorm';
+import { Request } from 'src/request/entities/request.entity';
 
 @Entity()
 @Unique(['email'])
@@ -23,4 +24,8 @@ export class Client {
 
   @Column()
   authProvider: 'email' | 'google' | 'kakao';
+
+  @OneToMany(() => Request, request => request.client)
+  requests: Request[];
+
 }
