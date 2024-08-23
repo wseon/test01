@@ -127,8 +127,6 @@ export class AuthService {
   }
 
   async deleteClientAccount(clientId: number): Promise<void> {
-    console.log('AAAAAAAAAAAAAAAAAAAAA')
-    console.log(clientId)
     const client = await this.clientsRepository.findOne({ where: { id: clientId } });
 
     if (!client) {
