@@ -9,8 +9,6 @@ export class BrokerController {
   @Post('register')
   @UsePipes(ValidationPipe)
   async register(@Body() registerDto: RegisterBrokerDto) {
-    console.log('DDDD')
-    console.log(registerDto)
     return this.brokerService.registerBroker(registerDto);
   }
 

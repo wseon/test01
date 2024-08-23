@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Client } from 'src/client/entities/client.entity';
 import { Broker } from 'src/broker/entities/broker.entity';
+import { Bid } from 'src/bid/entities/bid.entity';
 
 @Entity()
 export class Request {
@@ -24,4 +25,7 @@ export class Request {
 
   @Column({ default: false })
   isPublic: boolean; // 공개 여부 (true: 공개, false: 특정 Broker에게 요청)
+
+  @OneToMany(() => Bid, bid => bid.request) // 새로운 필드 추가
+  bids: Bid[];
 }

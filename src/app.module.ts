@@ -10,10 +10,10 @@ import { Client } from './client/entities/client.entity';
 import { BrokerModule } from './broker/broker.module';
 
 import { RequestModule } from './request/request.module';
-import { ContractModule } from './contract/contract.module';
+
+import { BidModule } from './bid/bid.module';
+
 import { ProviderModule } from './provider/provider.module';
-import { ChatModule } from './chat/chat.module';
-import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -35,10 +35,8 @@ import { PaymentModule } from './payment/payment.module';
     ClientModule,
     BrokerModule,
     RequestModule,
-    ContractModule,
     ProviderModule,
-    ChatModule,
-    PaymentModule,
+    BidModule,
   ],
 })
 export class AppModule {}

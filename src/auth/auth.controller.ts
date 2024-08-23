@@ -17,12 +17,12 @@ export class AuthController {
     return true
   }
 
-  @Post('register/client')
+  @Post('register')
   async registerClient(@Body() registerClientDto: RegisterClientDto): Promise<Client> {
     return this.authService.registerClient(registerClientDto);
   }
 
-  @Post('login/client')
+  @Post('login')
   async loginClient(@Body() loginClientDto: LoginClientDto): Promise<{ accessToken: string }> {
     return this.authService.loginClient(loginClientDto);
   }
@@ -51,7 +51,7 @@ export class AuthController {
     return this.authService.kakaoLogin(req);
   }
 
-  @Delete('delete-account')
+  @Delete('delete')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAccount(@Req() req) {
