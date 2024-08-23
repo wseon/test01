@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Client } from 'src/client/entities/client.entity';
+import { Client } from 'src/auth/entities/client.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,9 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET_KEY,
-      //secretOrKey: 'clienk',
     });
-    console.log('STRAGTE JWT_SECRET_KEY in JwtStrategy:', process.env.JWT_SECRET_KEY);
   }
 
   async validate(payload: any) {

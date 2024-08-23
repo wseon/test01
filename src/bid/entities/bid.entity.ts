@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Request } from 'src/request/entities/request.entity';
-import { Broker } from 'src/broker/entities/broker.entity';
+import { Broker } from 'src/auth/entities/broker.entity';
 
 @Entity()
 export class Bid {

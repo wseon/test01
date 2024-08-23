@@ -4,16 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
 
-import { ClientModule } from './client/client.module';
-import { Client } from './client/entities/client.entity';
-
-import { BrokerModule } from './broker/broker.module';
-
 import { RequestModule } from './request/request.module';
 
 import { BidModule } from './bid/bid.module';
-
-import { ProviderModule } from './provider/provider.module';
 
 @Module({
   imports: [
@@ -32,10 +25,7 @@ import { ProviderModule } from './provider/provider.module';
       synchronize: true, // for dev. if prd, false
     }),
     AuthModule,
-    ClientModule,
-    BrokerModule,
     RequestModule,
-    ProviderModule,
     BidModule,
   ],
 })

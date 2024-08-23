@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Bid } from './entities/bid.entity';
 import { BidService } from './bid.service';
 import { BidController } from './bid.controller';
-import { Broker } from 'src/broker/entities/broker.entity';
+import { Broker } from 'src/auth/entities/broker.entity';
 import { Request } from 'src/request/entities/request.entity';
 
 @Module({

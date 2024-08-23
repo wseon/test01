@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
-import { Client } from 'src/client/entities/client.entity';
-import { Broker } from 'src/broker/entities/broker.entity';
+import { Client } from 'src/auth/entities/client.entity';
+import { Broker } from 'src/auth/entities/broker.entity';
 import { Bid } from 'src/bid/entities/bid.entity';
 
 @Entity()

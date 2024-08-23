@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, ConflictException, B
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Bid } from './entities/bid.entity';
-import { Broker } from 'src/broker/entities/broker.entity';
+import { Broker } from 'src/auth/entities/broker.entity';
 import { Request } from 'src/request/entities/request.entity';
 
 @Injectable()

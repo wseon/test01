@@ -2,23 +2,23 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { Client } from 'src/client/entities/client.entity';
+
+import { Client } from './entities/client.entity';
+import { Broker } from './entities/broker.entity';
+import { Provider } from './entities/provider.entity';
 
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth-guard';
 
 import { PassportModule } from '@nestjs/passport';
-
 import { GoogleStrategy } from './strategies/google.strategy';
-
 import { KakaoStrategy } from './strategies/kakao.strategy';
-
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Client]),
+    TypeOrmModule.forFeature([Client, Broker, Provider]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -33,8 +33,4 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [AuthService, GoogleStrategy, KakaoStrategy, JwtStrategy, JwtAuthGuard],
 })
 
-export class AuthModule {
-  constructor() {
-    console.log('APP JWT_SECRET_KEY:', process.env.JWT_SECRET_KEY);
-  }
-}
+export class AuthModule {}

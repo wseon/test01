@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Request } from './entities/request.entity';
 import { CreateRequestDto } from './dto/create-request.dto';
-import { Client } from 'src/client/entities/client.entity';
-import { Broker } from 'src/broker/entities/broker.entity';
+import { Client } from 'src/auth/entities/client.entity';
+import { Broker } from 'src/auth/entities/broker.entity';
 
 @Injectable()
 export class RequestService {

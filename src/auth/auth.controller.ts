@@ -1,12 +1,14 @@
-import { Controller, Post, Body, Get, Req, UseGuards, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, UseGuards, Delete, HttpCode, HttpStatus, Patch, Param, UsePipes, ValidationPipe, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
+
 import { RegisterClientDto } from './dto/register-client.dto';
-import { Client } from 'src/client/entities/client.entity';
 import { LoginClientDto } from './dto/login-client.dto';
+import { RegisterBrokerDto } from './dto/register-broker.dto';
+import { RegisterProviderDto } from './dto/register-provider.dto';
 
 import { AuthGuard } from '@nestjs/passport';
-
 import { JwtAuthGuard } from './guards/jwt-auth-guard';
+import { Client } from './entities/client.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -17,12 +19,12 @@ export class AuthController {
     return true
   }
 
-  @Post('register')
+  @Post('register/client')
   async registerClient(@Body() registerClientDto: RegisterClientDto): Promise<Client> {
     return this.authService.registerClient(registerClientDto);
   }
 
-  @Post('login')
+  @Post('login/client')
   async loginClient(@Body() loginClientDto: LoginClientDto): Promise<{ accessToken: string }> {
     return this.authService.loginClient(loginClientDto);
   }
@@ -51,11 +53,50 @@ export class AuthController {
     return this.authService.kakaoLogin(req);
   }
 
-  @Delete('delete')
+  @Delete('delete/client')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAccount(@Req() req) {
     await this.authService.deleteClientAccount(req.user.id);
   }
 
+  @Post('register/broker')
+  @UsePipes(ValidationPipe)
+  async registerBroker(@Body() registerDto: RegisterBrokerDto) {
+    return this.authService.registerBroker(registerDto);
+  }
+
+  @Post('login/broker')
+  async loginBroker(@Body() loginDto: any) {
+    const broker = await this.authService.validateBroker(loginDto.email, loginDto.password);
+    if (!broker) {
+      throw new UnauthorizedException('Invalid credentials or not approved');
+    }
+    return this.authService.loginBroker(broker);
+  }
+
+  @Patch(':id/approve/broker')
+  async approveBroker(@Param('id') id: number) {
+    return this.authService.approveBroker(id);
+  }
+
+  @Post('register/provider')
+  @UsePipes(ValidationPipe)
+  async registerProvider(@Body() registerDto: RegisterProviderDto) {
+    return this.authService.registerProvider(registerDto);
+  }
+
+  @Post('login/provider')
+  async loginProvider(@Body() loginDto: any) {
+    const provider = await this.authService.validateProvider(loginDto.email, loginDto.password);
+    if (!provider) {
+      throw new UnauthorizedException('Invalid credentials or not approved');
+    }
+    return this.authService.loginProvider(provider);
+  }
+
+  @Patch(':id/approve/provider')
+  async approveProvider(@Param('id') id: number) {
+    return this.authService.approveProvider(id);
+  }
 }
