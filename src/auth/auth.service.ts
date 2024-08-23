@@ -65,7 +65,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { email: client.email, sub: client.id };
+    const payload = { email: client.email, sub: client.id, roles: 'client' };
     const accessToken = this.jwtService.sign(payload);
 
     return { accessToken };
@@ -92,7 +92,7 @@ export class AuthService {
       client = await this.clientsRepository.save(client);
     }
 
-    const payload = { email: client.email, sub: client.id };
+    const payload = { email: client.email, sub: client.id, roles: 'client' };
     const accessToken = this.jwtService.sign(payload);
 
     return {
@@ -125,7 +125,7 @@ export class AuthService {
       client = await this.clientsRepository.save(client);
     }
 
-    const payload = { email: client.email, sub: client.id };
+    const payload = { email: client.email, sub: client.id, roles: 'client' };
     const accessToken = this.jwtService.sign(payload);
 
     return {
@@ -173,7 +173,7 @@ export class AuthService {
   }
 
   async loginBroker(broker: Broker): Promise<{ accessToken: string }> {
-    const payload = { email: broker.email, sub: broker.id };
+    const payload = { email: broker.email, sub: broker.id, roles: 'broker' };
     const accessToken = this.jwtService.sign(payload);
     return { accessToken };
   }
@@ -215,7 +215,7 @@ export class AuthService {
   }
 
   async loginProvider(provider: Provider): Promise<{ accessToken: string }> {
-    const payload = { email: provider.email, sub: provider.id };
+    const payload = { email: provider.email, sub: provider.id, roles: 'broker' };
     const accessToken = this.jwtService.sign(payload);
     return { accessToken };
   }
