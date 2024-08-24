@@ -22,8 +22,6 @@ export class BidController {
     @Param('requestId') requestId: number,
     @Body('amount') amount: number,
   ) {
-    console.log('DDDD')
-    console.log(req.user)
     const brokerId = req.user.id;
     return this.bidService.createBid(brokerId, requestId, amount);
   }

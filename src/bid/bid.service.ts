@@ -7,8 +7,8 @@ import { Request } from 'src/request/entities/request.entity';
 
 @Injectable()
 export class BidService {
-  private readonly brokerFeePercentage: number = parseFloat(process.env.BROKER_FEE_PERCENTAGE || '0');
-  private readonly brokerFeeFixed: number = parseInt(process.env.BROKER_FEE_FIXED || '0', 10);
+  private readonly brokerFeePercentage: number = parseFloat(process.env.BROKER_FEE_PERCENTAGE);
+  private readonly brokerFeeFixed: number = parseInt(process.env.BROKER_FEE_FIXED, 10);
 
   constructor(
     @InjectRepository(Bid)
@@ -49,22 +49,19 @@ export class BidService {
     }
 
     const fee = this.calculateFee(amount);
-    const totalAmount = amount + fee;
 
-    if (totalAmount > broker.balance) {  // 브로커의 잔고 확인 (예: DB에 저장된 balance 필드가 있다고 가정)
+    if (fee > broker.balance) {
       throw new BadRequestException('Insufficient balance to cover the fee');
     }
 
-    // 브로커의 잔고에서 수수료 차감 (예: DB에 balance 필드가 있다고 가정)
+    // 브로커의 잔고에서 수수료 차
     broker.balance -= fee;
     await this.brokerRepository.save(broker);
-
     const bid = this.bidRepository.create({
       amount,
       broker,
       request,
     });
-
     return this.bidRepository.save(bid);
   }
 
