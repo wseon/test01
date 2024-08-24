@@ -67,7 +67,7 @@ export class BidService {
 
   // 특정 요청에 대한 견적 목록 조회 (해당 요청의 클라이언트만 가능)
   async getBidsForRequest(clientId: number, requestId: number): Promise<Bid[]> {
-    const request = await this.requestRepository.findOne({ where: { id: requestId }, relations: ['bids'] });
+    const request = await this.requestRepository.findOne({ where: { id: requestId }, relations: ['bids', 'client'] });
 
     if (!request) {
       throw new NotFoundException('Request not found');
