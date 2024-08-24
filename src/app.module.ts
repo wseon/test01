@@ -8,6 +8,7 @@ import { RequestModule } from './request/request.module';
 
 import { BidModule } from './bid/bid.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
