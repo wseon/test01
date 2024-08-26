@@ -8,6 +8,7 @@ import { RequestModule } from './request/request.module';
 
 import { BidModule } from './bid/bid.module';
 
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BidModule } from './bid/bid.module';
     AuthModule,
     RequestModule,
     BidModule,
+    ChatModule,
   ],
 })
 export class AppModule {}
