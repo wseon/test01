@@ -1,0 +1,121 @@
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  MessageBody,
+  WebSocketServer,
+  ConnectedSocket,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import Redis from 'ioredis';
+import { RoomDto } from './dto/room.dto';
+import { MessageDto } from './dto/message.dto';
+import { ChatService } from './chat.service';
+
+@WebSocketGateway({ 
+  namespace: '/chat', 
+  cors: true
+})
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
+  private redisSubscriberClient: Redis;
+  private redisPublisherClient: Redis;
+
+  constructor(
+    private readonly chatService: ChatService, // ChatService 주입
+  ) {
+    this.redisSubscriberClient = new Redis();
+    this.redisPublisherClient = new Redis();
+  }
+
+  afterInit(server: Server) {
+    console.log('WebSocket initialized');
+  }
+
+  handleConnection(client: Socket) {
+    console.log(`Client connected: ${client.id}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log(`Client disconnected: ${client.id}`);
+  }
+
+  @SubscribeMessage('createRoom')
+  async handleCreateRoom(@MessageBody() roomDto: RoomDto, @ConnectedSocket() client: Socket) {
+    const roomExists = await this.redisPublisherClient.sismember('rooms', roomDto.roomName);
+    if (!roomExists) {
+      await this.redisPublisherClient.sadd('rooms', roomDto.roomName);
+      await this.redisPublisherClient.sadd(`room:${roomDto.roomName}:users`, ...roomDto.users);
+      client.emit('roomCreated', { roomDto, status: 'Room created successfully' });
+    } else {
+      client.emit('roomCreated', { roomDto, status: 'Room already exists' });
+    }
+  }
+
+  @SubscribeMessage('joinRoom')
+  async handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() roomDto: RoomDto) {
+    const roomExists = await this.redisPublisherClient.sismember('rooms', roomDto.roomName);
+    if (roomExists) {
+      await this.redisPublisherClient.sadd(`room:${roomDto.roomName}:users`, client.id);
+      client.join(roomDto.roomName);
+      const joinMessage = new MessageDto(roomDto.roomName, 'Server', `${client.id} joined ${roomDto.roomName}`);
+      this.redisPublisherClient.publish('chat', JSON.stringify(joinMessage));
+    } else {
+      client.emit('joinError', { roomDto, message: 'Room does not exist' });
+    }
+  }
+
+  @SubscribeMessage('leaveRoom')
+  async handleLeaveRoom(@ConnectedSocket() client: Socket, @MessageBody() roomDto: RoomDto) {
+    const roomExists = await this.redisPublisherClient.sismember('rooms', roomDto.roomName);
+    if (roomExists) {
+      await this.redisPublisherClient.srem(`room:${roomDto.roomName}:users`, client.id);
+      client.leave(roomDto.roomName);
+      const leaveMessage = new MessageDto(roomDto.roomName, 'Server', `${client.id} left ${roomDto.roomName}`);
+      this.redisPublisherClient.publish('chat', JSON.stringify(leaveMessage));
+    } else {
+      client.emit('leaveError', { roomDto, message: 'Room does not exist' });
+    }
+  }
+
+  @SubscribeMessage('message')
+  async handleMessage(@MessageBody() messageDto: MessageDto, @ConnectedSocket() client: Socket) {
+    const roomExists = await this.redisPublisherClient.sismember('rooms', messageDto.roomName);
+    if (roomExists) {
+      // ChatService를 사용하여 MessageDto 생성
+      const message = this.chatService.createMessage(messageDto.roomName, messageDto.sender, messageDto.content);
+      this.redisPublisherClient.publish('chat', JSON.stringify(message));
+    } else {
+      client.emit('messageError', { roomName: messageDto.roomName, message: 'Room does not exist' });
+    }
+  }
+
+  @SubscribeMessage('getRooms')
+  async handleGetRooms(@ConnectedSocket() client: Socket) {
+    const rooms = await this.redisPublisherClient.smembers('rooms');
+    const roomDtos: RoomDto[] = await Promise.all(
+      rooms.map(async roomName => {
+        const users = await this.redisPublisherClient.smembers(`room:${roomName}:users`);
+        return { roomName, users };
+      })
+    );
+    client.emit('roomsList', roomDtos);
+  }
+
+  async onModuleInit() {
+    this.redisSubscriberClient.subscribe('chat', (err, count) => {
+      if (err) {
+        console.error('Failed to subscribe: %s', err.message);
+      } else {
+        console.log(`Subscribed successfully! This client is currently subscribed to ${count} channels.`);
+      }
+    });
+
+    this.redisSubscriberClient.on('message', (channel, message) => {
+      const data: MessageDto = JSON.parse(message);
+      this.server.to(data.roomName).emit('message', data);
+    });
+  }
+}
