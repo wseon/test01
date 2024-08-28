@@ -9,6 +9,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request as ExpressRequest } from 'express';
+import { AssignWorkersDto } from './dto/assign-workers.dto';
 
 @ApiTags('Orders')
 @Controller('orders')
@@ -67,5 +68,13 @@ export class OrderController {
   async getOrdersByProvider(@Req() req: ExpressRequest) {
     const providerId = req.user.id;
     return this.orderService.getOrdersByProvider(providerId);
+  }
+
+  @ApiOperation({ summary: 'Assign workers to an order' })
+  @ApiBearerAuth()
+  @Patch(':orderId/assign-workers')
+  @Roles('provider')
+  async assignWorkersToOrder(@Param('orderId') orderId: number, @Body() assignWorkersDto: AssignWorkersDto) {
+    return this.orderService.assignWorkersToOrder(orderId, assignWorkersDto);
   }
 }

@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany } from 'typeorm';
 import { Request } from 'src/request/entities/request.entity';
 import { Contract } from 'src/contract/entities/contract.entity';
+import { Review } from 'src/review/entities/review.entity';
 
 @Entity()
 @Unique(['email'])
@@ -32,4 +33,6 @@ export class Client {
   @OneToMany(() => Contract, contract => contract.client)
   contracts: Contract[]; // 새로운 필드 추가
 
+  @OneToMany(() => Review, review => review.client)
+  reviews: Review[];
 }

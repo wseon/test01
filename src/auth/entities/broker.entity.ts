@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany } from 'typeo
 import { Bid } from 'src/bid/entities/bid.entity';
 import { Contract } from 'src/contract/entities/contract.entity';
 import { Order } from 'src/order/entities/order.entity';
+import { Review } from 'src/review/entities/review.entity';
+import { Comment } from 'src/review/entities/comment.entity';
 
 @Entity()
 @Unique(['businessNumber'])
@@ -33,7 +35,7 @@ export class Broker {
   @Column('decimal', { default: 0 })  // 브로커의 잔고 필드 추가
   balance: number;
 
-  @OneToMany(() => Bid, bid => bid.broker) // 새로운 필드 추가
+  @OneToMany(() => Bid, bid => bid.broker)
   bids: Bid[];
 
   @OneToMany(() => Contract, contract => contract.broker)
@@ -41,5 +43,11 @@ export class Broker {
 
   @OneToMany(() => Order, order => order.broker)
   orders: Order[];
+
+  @OneToMany(() => Review, review => review.broker)
+  reviews: Review[];
+
+  @OneToMany(() => Comment, comment => comment.broker)
+  comments: Comment[];
 
 }

@@ -10,6 +10,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Broker } from 'src/auth/entities/broker.entity';
 import { Contract } from 'src/contract/entities/contract.entity';
+import { Worker } from 'src/worker/entities/worker.entity';
+import { AssignWorkersDto } from './dto/assign-workers.dto';
 
 @Injectable()
 export class OrderService {
@@ -24,6 +26,8 @@ export class OrderService {
     private brokerRepository: Repository<Broker>,
     @InjectRepository(Contract)
     private contractRepository: Repository<Contract>,
+    @InjectRepository(Worker)
+    private workerRepository: Repository<Worker>,
   ) {}
 
   // 수수료 계산 메서드 (예시)
@@ -108,6 +112,26 @@ export class OrderService {
     await this.orderRepository.save(order);
 
     return this.orderApplicationRepository.save(application);
+  }
+
+  // 오더에 여러 작업자를 배정
+  async assignWorkersToOrder(orderId: number, assignWorkersDto: AssignWorkersDto): Promise<Order> {
+    const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['workers'] });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    const workers = await this.workerRepository.findByIds(assignWorkersDto.workerIds);
+
+    if (workers.length !== assignWorkersDto.workerIds.length) {
+      throw new NotFoundException('One or more workers not found');
+    }
+
+    order.workers = [...order.workers, ...workers];  // 기존 작업자에 추가로 배정
+    order.status = 'assigned';
+
+    return this.orderRepository.save(order);
   }
 
   // 오더 상태 업데이트

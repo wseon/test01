@@ -3,6 +3,7 @@ import { Broker } from 'src/auth/entities/broker.entity';
 import { Client } from 'src/auth/entities/client.entity';
 import { Request } from 'src/request/entities/request.entity';
 import { Order } from 'src/order/entities/order.entity';
+import { Work } from 'src/work/entities/work.entity';
 
 @Entity()
 export class Contract {
@@ -19,7 +20,10 @@ export class Contract {
   client: Client;
 
   @OneToMany(() => Order, order => order.contract)
-  orders: Order[]; // 새로운 필드 추가
+  orders: Order[];
+
+  @OneToMany(() => Work, work => work.contract)
+  works: Work[];
 
   @Column()
   contractDetails: string;
