@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 import { Client } from 'src/auth/entities/client.entity';
 import { Broker } from 'src/auth/entities/broker.entity';
 import { Bid } from 'src/bid/entities/bid.entity';
+import { Contract } from 'src/contract/entities/contract.entity';
 
 @Entity()
 export class Request {
@@ -28,4 +29,7 @@ export class Request {
 
   @OneToMany(() => Bid, bid => bid.request) // 새로운 필드 추가
   bids: Bid[];
+
+  @OneToMany(() => Contract, contract => contract.request)
+  contracts: Contract[]; // 새로운 필드 추가
 }

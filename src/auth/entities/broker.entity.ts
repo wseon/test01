@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany } from 'typeorm';
 import { Bid } from 'src/bid/entities/bid.entity';
+import { Contract } from 'src/contract/entities/contract.entity';
 
 @Entity()
 @Unique(['businessNumber'])
@@ -33,4 +34,7 @@ export class Broker {
 
   @OneToMany(() => Bid, bid => bid.broker) // 새로운 필드 추가
   bids: Bid[];
+
+  @OneToMany(() => Contract, contract => contract.broker)
+  contracts: Contract[]; // 새로운 필드 추가
 }
