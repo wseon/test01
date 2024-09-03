@@ -18,7 +18,7 @@ import Redis from 'ioredis';
       provide: 'RedisPublisherClient',
       useFactory: () => {
         return new Redis({
-          host: 'localhost',
+          host: '192.168.0.132',
           port: 6379,
         });
       },
@@ -27,7 +27,7 @@ import Redis from 'ioredis';
       provide: 'RedisSubscriberClient',
       useFactory: () => {
         return new Redis({
-          host: 'localhost',
+          host: '192.168.0.132',
           port: 6379,
         });
       },
