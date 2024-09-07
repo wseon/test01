@@ -9,6 +9,7 @@ import { RequestModule } from './request/request.module';
 import { BidModule } from './bid/bid.module';
 
 import { ChatModule } from './chat/chat.module';
+import { ContractModule } from './contract/contract.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ChatModule } from './chat/chat.module';
     RequestModule,
     BidModule,
     ChatModule,
+    ContractModule,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards, Req, Delete } from '@nestjs/common';
 import { BidService } from './bid.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth-guard';
 import { Roles } from 'src/auth/roles.decorator';
@@ -55,4 +55,5 @@ export class BidController {
     const clientId = req.user.id;
     return this.bidService.acceptBid(clientId, bidId);
   }
+
 }

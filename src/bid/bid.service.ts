@@ -111,4 +111,5 @@ export class BidService {
     bid.isAccepted = true;
     return this.bidRepository.save(bid);
   }
+
 }

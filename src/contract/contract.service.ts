@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Contract } from './entities/contract.entity';
@@ -10,8 +14,13 @@ import { Broker } from 'src/auth/entities/broker.entity';
 
 @Injectable()
 export class ContractService {
-  private readonly brokerFeePercentage: number = parseFloat(process.env.BROKER_FEE_PERCENTAGE);
-  private readonly brokerFeeFixed: number = parseInt(process.env.BROKER_FEE_FIXED, 10);
+  private readonly brokerFeePercentage: number = parseFloat(
+    process.env.BROKER_FEE_PERCENTAGE,
+  );
+  private readonly brokerFeeFixed: number = parseInt(
+    process.env.BROKER_FEE_FIXED,
+    10,
+  );
 
   constructor(
     @InjectRepository(Contract)
@@ -27,7 +36,10 @@ export class ContractService {
     return 0;
   }
 
-  async requestContract(client: Client, requestContractDto: RequestContractDto): Promise<Contract> {
+  async requestContract(
+    client: Client,
+    requestContractDto: RequestContractDto,
+  ): Promise<Contract> {
     const contract = this.contractRepository.create({
       client,
       request: { id: requestContractDto.requestId } as any,
@@ -36,17 +48,25 @@ export class ContractService {
     return this.contractRepository.save(contract);
   }
 
-  async createContract(broker: Broker, createContractDto: CreateContractDto): Promise<Contract> {
+  async createContract(
+    broker: Broker,
+    createContractDto: CreateContractDto,
+  ): Promise<Contract> {
+    // TODO: [240908] Contract 생성시, clientId도 추가해줘야 함. -> Client가 자신의 Contracts 확인하기 위해.
     const contract = this.contractRepository.create({
       broker,
       request: { id: createContractDto.requestId } as any,
+      client: { id: createContractDto.clientId } as any,
       contractDetails: createContractDto.contractDetails,
       status: 'drafted',
     });
     return this.contractRepository.save(contract);
   }
 
-  async agreeContractAsClient(client: Client, agreeContractDto: AgreeContractDto): Promise<Contract> {
+  async agreeContractAsClient(
+    client: Client,
+    agreeContractDto: AgreeContractDto,
+  ): Promise<Contract> {
     const contract = await this.contractRepository.findOne({
       where: { id: agreeContractDto.contractId },
       relations: ['client'],
@@ -69,7 +89,10 @@ export class ContractService {
     return this.contractRepository.save(contract);
   }
 
-  async agreeContractAsBroker(broker: Broker, agreeContractDto: AgreeContractDto): Promise<Contract> {
+  async agreeContractAsBroker(
+    broker: Broker,
+    agreeContractDto: AgreeContractDto,
+  ): Promise<Contract> {
     const contract = await this.contractRepository.findOne({
       where: { id: agreeContractDto.contractId },
       relations: ['broker', 'request'],
@@ -103,11 +126,17 @@ export class ContractService {
     return this.contractRepository.save(contract);
   }
 
-  async getContractsByClient(client: Client): Promise<Contract[]> {
-    return this.contractRepository.find({ where: { client } });
+  async getContractsByClient(clientId: number): Promise<Contract[]> {
+    return this.contractRepository.find({
+      where: [{ client: { id: clientId } }],
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  async getContractsByBroker(broker: Broker): Promise<Contract[]> {
-    return this.contractRepository.find({ where: { broker } });
+  async getContractsByBroker(brokerId: number): Promise<Contract[]> {
+    return this.contractRepository.find({
+      where: [{ broker: { id: brokerId } }],
+      order: { createdAt: 'DESC' },
+    });
   }
 }

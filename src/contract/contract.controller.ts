@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Get,
+  Param,
+} from '@nestjs/common';
 import { ContractService } from './contract.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { AgreeContractDto } from './dto/agree-contract.dto';
@@ -19,7 +27,10 @@ export class ContractController {
   @ApiBearerAuth()
   @Post('request')
   @Roles('client')
-  async requestContract(@Req() req: ExpressRequest, @Body() requestContractDto: RequestContractDto) {
+  async requestContract(
+    @Req() req: ExpressRequest,
+    @Body() requestContractDto: RequestContractDto,
+  ) {
     const client = req.user;
     return this.contractService.requestContract(client, requestContractDto);
   }
@@ -28,26 +39,58 @@ export class ContractController {
   @ApiBearerAuth()
   @Post('create')
   @Roles('broker')
-  async createContract(@Req() req: ExpressRequest, @Body() createContractDto: CreateContractDto) {
+  async createContract(
+    @Req() req: ExpressRequest,
+    @Body() createContractDto: CreateContractDto,
+  ) {
     const broker = req.user;
     return this.contractService.createContract(broker, createContractDto);
   }
 
-  @ApiOperation({ summary: 'Client agrees to the contract' })
+  @ApiOperation({
+    summary: 'Client agrees to the contract (소비자 : 계약 요청)',
+  })
   @ApiBearerAuth()
   @Post('agree/client')
   @Roles('client')
-  async agreeContractAsClient(@Req() req: ExpressRequest, @Body() agreeContractDto: AgreeContractDto) {
+  async agreeContractAsClient(
+    @Req() req: ExpressRequest,
+    @Body() agreeContractDto: AgreeContractDto,
+  ) {
     const client = req.user;
     return this.contractService.agreeContractAsClient(client, agreeContractDto);
   }
 
-  @ApiOperation({ summary: 'Broker agrees to the contract' })
+  @ApiOperation({ summary: 'Broker agrees to the contract (업체 : 계약 확정)' })
   @ApiBearerAuth()
   @Post('agree/broker')
   @Roles('broker')
-  async agreeContractAsBroker(@Req() req: ExpressRequest, @Body() agreeContractDto: AgreeContractDto) {
+  async agreeContractAsBroker(
+    @Req() req: ExpressRequest,
+    @Body() agreeContractDto: AgreeContractDto,
+  ) {
     const broker = req.user;
     return this.contractService.agreeContractAsBroker(broker, agreeContractDto);
+  }
+
+  @ApiOperation({
+    summary: 'Get contracts by a client (소비자: 계약서 확인)',
+  })
+  @ApiBearerAuth()
+  @Roles('client')
+  @Get('client')
+  async getContractsByClient(@Req() req: ExpressRequest) {
+    const clientId = req.user.id;
+    console.log('client', clientId);
+    return this.contractService.getContractsByClient(clientId);
+  }
+
+  @ApiOperation({ summary: 'Get contracts by a broker (업체: 계약서 확인' })
+  @ApiBearerAuth()
+  @Roles('broker')
+  @Get('broker')
+  async getContractsByBroker(@Req() req: ExpressRequest) {
+    const brokerId = req.user.id;
+    return await this.contractService.getContractsByBroker(brokerId);
   }
 }
