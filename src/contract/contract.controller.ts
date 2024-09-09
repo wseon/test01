@@ -82,7 +82,6 @@ export class ContractController {
   @Get('client')
   async getContractsByClient(@Req() req: ExpressRequest) {
     const clientId = req.user.id;
-    console.log('client', clientId);
     return this.contractService.getContractsByClient(clientId);
   }
 

@@ -85,7 +85,7 @@ export class ContractService {
 
     // Client의 경우 계약 요청 == 계약 승인으로 본다. -> requested로 변경
     // 계약 completed는 Broker만 수행할 수 있다.
-    contract.status = 'requested'; 
+    contract.status = 'requested';
 
     return this.contractRepository.save(contract);
   }
@@ -107,6 +107,14 @@ export class ContractService {
       throw new BadRequestException('Unauthorized');
     }
 
+    // Client 승인이 먼저 이뤄지고 Broker가 최종 승인 == 계약 확정 프로세스 진행
+    if (contract.clientAgreed) {
+      contract.status = 'completed';
+      contract.brokerAgreed = true;
+    } else {
+      throw new BadRequestException('Client approve is required.')
+    }
+
     // 수수료 계산
     const fee = this.calculateFee(); // 고정형 수수료 계산
 
@@ -118,11 +126,6 @@ export class ContractService {
     broker.balance -= fee;
     await this.brokerRepository.save(broker);
 
-    contract.brokerAgreed = true;
-
-    if (contract.clientAgreed) {
-      contract.status = 'completed';
-    }
 
     return this.contractRepository.save(contract);
   }
