@@ -36,6 +36,7 @@ export class ContractService {
     return 0;
   }
 
+  // Client 가 계약 요청하면 이 계약을 승인(Agree)한 것으로 인정 -> Contract를 agree로 변경한다.
   async requestContract(
     client: Client,
     requestContractDto: RequestContractDto,
@@ -82,9 +83,9 @@ export class ContractService {
 
     contract.clientAgreed = true;
 
-    if (contract.brokerAgreed) {
-      contract.status = 'completed';
-    }
+    // Client의 경우 계약 요청 == 계약 승인으로 본다. -> requested로 변경
+    // 계약 completed는 Broker만 수행할 수 있다.
+    contract.status = 'requested'; 
 
     return this.contractRepository.save(contract);
   }

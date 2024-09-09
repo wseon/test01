@@ -23,6 +23,7 @@ import { Request as ExpressRequest } from 'express';
 export class ContractController {
   constructor(private readonly contractService: ContractService) {}
 
+  // Deprecated : 2024-09-09 : 계약서 작성, 승인 시나리오 상 삭제 -> @Post('agree/client') 로 대체
   @ApiOperation({ summary: 'Request a contract from a broker' })
   @ApiBearerAuth()
   @Post('request')
@@ -74,7 +75,7 @@ export class ContractController {
   }
 
   @ApiOperation({
-    summary: 'Get contracts by a client (소비자: 계약서 확인)',
+    summary: 'Get contracts by a client (소비자: 계약서 조회)',
   })
   @ApiBearerAuth()
   @Roles('client')
@@ -85,7 +86,7 @@ export class ContractController {
     return this.contractService.getContractsByClient(clientId);
   }
 
-  @ApiOperation({ summary: 'Get contracts by a broker (업체: 계약서 확인' })
+  @ApiOperation({ summary: 'Get contracts by a broker (업체: 계약서 조회' })
   @ApiBearerAuth()
   @Roles('broker')
   @Get('broker')

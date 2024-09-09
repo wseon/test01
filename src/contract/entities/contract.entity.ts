@@ -34,7 +34,7 @@ export class Contract {
   @Column({ default: false })
   clientAgreed: boolean; // 클라이언트 동의 여부
 
-  @Column({ default: 'pending' })
+  @Column({ default: 'pending' }) // (default) pending, drafted, requested, completed
   status: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
