@@ -10,6 +10,7 @@ import { BidModule } from './bid/bid.module';
 
 import { ChatModule } from './chat/chat.module';
 import { ContractModule } from './contract/contract.module';
+import { WorkModule } from './work/work.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ContractModule } from './contract/contract.module';
     BidModule,
     ChatModule,
     ContractModule,
+    WorkModule,
   ],
 })
 export class AppModule {}
