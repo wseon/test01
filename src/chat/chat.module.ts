@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
+import { ChatController } from './chat.controller';
 import { Client as ElasticsearchClient } from '@elastic/elasticsearch';
 import Redis from 'ioredis';
 
 @Module({
+  controllers: [ChatController],
   providers: [
     ChatGateway,
     ChatService,
