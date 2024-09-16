@@ -17,7 +17,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 
 @WebSocketGateway({namespace: '/chat', cors: true})
-@UseGuards(JwtAuthGuard, RolesGuard)
+//@UseGuards(JwtAuthGuard, RolesGuard)
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
@@ -36,7 +36,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('createRoom')
-  @Roles('client', 'broker')
+  //@Roles('client', 'broker')
   async handleCreateRoom(@MessageBody() roomName: string, @ConnectedSocket() client: Socket) {
     const roomCreated = await this.chatService.createRoom(roomName);
     if (roomCreated) {
@@ -47,7 +47,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('joinRoom')
-  @Roles('client', 'broker')
+  //@Roles('client', 'broker')
   async handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() roomName: string) {
     const roomExists = await this.chatService.isRoomExists(roomName);
     if (roomExists) {
@@ -64,7 +64,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('leaveRoom')
-  @Roles('client', 'broker')
+  //@Roles('client', 'broker')
   async handleLeaveRoom(@ConnectedSocket() client: Socket, @MessageBody() roomName: string) {
     const roomExists = await this.chatService.isRoomExists(roomName);
     if (roomExists) {
@@ -81,7 +81,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('message')
-  @Roles('client', 'broker')
+  //@Roles('client', 'broker')
   async handleMessage(@MessageBody() data: { roomName: string; sender: string; message: string }, @ConnectedSocket() client: Socket) {
     const roomExists = await this.chatService.isRoomExists(data.roomName);
     if (roomExists) {
@@ -92,7 +92,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('getRooms')
-  @Roles('client', 'broker')
+  //@Roles('client', 'broker')
   async handleGetRooms(@ConnectedSocket() client: Socket) {
     const rooms = await this.chatService.getRooms();
     client.emit('roomsList', rooms);

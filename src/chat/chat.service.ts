@@ -54,6 +54,52 @@ export class ChatService {
     });
   }
 
+  async getRecentMessages(roomName: string): Promise<any> {
+    const resp = await this.elasticsearchClient.search({
+      index: 'chat-messages',
+      body: {
+        query: {
+          match: { roomName }
+        },
+        sort: [{ timestamp: { order: 'desc' } }],
+        size: 20
+      }
+    });
+    return resp.hits.hits.map(hit => hit._source).reverse();
+  }
+
+  async getMessagesBefore(roomName: string, messageId: string): Promise<any> {
+    const resp01 = await this.elasticsearchClient.get({
+      index: 'chat-messages',
+      id: messageId,
+    });
+
+    const targetMessage: any = resp01._source;
+    const targetTimestamp = targetMessage.timestamp;
+    const resp02 = await this.elasticsearchClient.search({
+      index: 'chat-index',
+      body: {
+        query: {
+          bool: {
+            must: [
+              { match: { roomName } }
+            ],
+            filter: {
+              range: {
+                timestamp: {
+                  lt: targetTimestamp
+                }
+              }
+            }
+          }
+        },
+        sort: [{ timestamp: { order: 'desc' } }],
+        size: 20
+      }
+    });
+    return resp02.hits.hits.map(hit => hit._source).reverse();
+  }
+
   async getRooms(): Promise<string[]> {
     return await this.redisPublisherClient.smembers('rooms');
   }
