@@ -5,7 +5,6 @@ import { AuthService } from './auth.service';
 
 import { Client } from './entities/client.entity';
 import { Broker } from './entities/broker.entity';
-import { Provider } from './entities/provider.entity';
 
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -18,7 +17,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Client, Broker, Provider]),
+    TypeOrmModule.forFeature([Client, Broker]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

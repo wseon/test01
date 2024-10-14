@@ -4,27 +4,27 @@ import { Repository } from 'typeorm';
 import { Worker } from './entities/worker.entity';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
-import { Provider } from 'src/auth/entities/provider.entity';
+import { Broker } from 'src/auth/entities/broker.entity';
 
 @Injectable()
 export class WorkerService {
   constructor(
     @InjectRepository(Worker)
     private workerRepository: Repository<Worker>,
-    @InjectRepository(Provider)
-    private providerRepository: Repository<Provider>,
+    @InjectRepository(Broker)
+    private brokerRepository: Repository<Broker>,
   ) {}
 
-  async createWorker(providerId: number, createWorkerDto: CreateWorkerDto): Promise<Worker> {
-    const provider = await this.providerRepository.findOne({ where: { id: providerId } });
+  async createWorker(brokerId: number, createWorkerDto: CreateWorkerDto): Promise<Worker> {
+    const broker = await this.brokerRepository.findOne({ where: { id: brokerId } });
 
-    if (!provider) {
+    if (!broker) {
       throw new NotFoundException('Provider not found');
     }
 
     const worker = this.workerRepository.create({
       ...createWorkerDto,
-      provider,
+      broker,
     });
 
     return this.workerRepository.save(worker);
@@ -51,7 +51,7 @@ export class WorkerService {
     await this.workerRepository.remove(worker);
   }
 
-  async getWorkersByProvider(providerId: number): Promise<Worker[]> {
-    return this.workerRepository.find({ where: { provider: { id: providerId } } });
+  async getWorkersByBroker(brokerId: number): Promise<Worker[]> {
+    return this.workerRepository.find({ where: { broker: { id: brokerId } } });
   }
 }

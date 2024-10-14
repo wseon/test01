@@ -1,9 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, Unique, OneToMany } from 'typeorm';
 import { Bid } from 'src/bid/entities/bid.entity';
 import { Contract } from 'src/contract/entities/contract.entity';
-import { Order } from 'src/order/entities/order.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { Comment } from 'src/review/entities/comment.entity';
+import { Worker } from 'src/worker/entities/worker.entity';
 
 @Entity()
 @Unique(['businessNumber'])
@@ -41,13 +41,13 @@ export class Broker {
   @OneToMany(() => Contract, contract => contract.broker)
   contracts: Contract[];
 
-  @OneToMany(() => Order, order => order.broker)
-  orders: Order[];
-
   @OneToMany(() => Review, review => review.broker)
   reviews: Review[];
 
   @OneToMany(() => Comment, comment => comment.broker)
   comments: Comment[];
+
+  @OneToMany(() => Worker, worker => worker.broker)
+  workers: Worker[];
 
 }

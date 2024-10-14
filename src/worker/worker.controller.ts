@@ -17,16 +17,16 @@ export class WorkerController {
   @ApiOperation({ summary: 'Create a new worker' })
   @ApiBearerAuth()
   @Post()
-  @Roles('provider')
+  @Roles('broker')
   async createWorker(@Req() req: ExpressRequest, @Body() createWorkerDto: CreateWorkerDto) {
-    const providerId = req.user.id;
-    return this.workerService.createWorker(providerId, createWorkerDto);
+    const brokerId = req.user.id;
+    return this.workerService.createWorker(brokerId, createWorkerDto);
   }
 
   @ApiOperation({ summary: 'Update worker details' })
   @ApiBearerAuth()
   @Patch(':workerId')
-  @Roles('provider')
+  @Roles('broker')
   async updateWorker(@Param('workerId') workerId: number, @Body() updateWorkerDto: UpdateWorkerDto) {
     return this.workerService.updateWorker(workerId, updateWorkerDto);
   }
@@ -34,7 +34,7 @@ export class WorkerController {
   @ApiOperation({ summary: 'Delete a worker' })
   @ApiBearerAuth()
   @Delete(':workerId')
-  @Roles('provider')
+  @Roles('broker')
   async deleteWorker(@Param('workerId') workerId: number) {
     return this.workerService.deleteWorker(workerId);
   }
@@ -42,9 +42,9 @@ export class WorkerController {
   @ApiOperation({ summary: 'Get all workers for a provider' })
   @ApiBearerAuth()
   @Get()
-  @Roles('provider')
-  async getWorkersByProvider(@Req() req: ExpressRequest) {
-    const providerId = req.user.id;
-    return this.workerService.getWorkersByProvider(providerId);
+  @Roles('broker')
+  async getWorkersByBroker(@Req() req: ExpressRequest) {
+    const brokerId = req.user.id;
+    return this.workerService.getWorkersByBroker(brokerId);
   }
 }

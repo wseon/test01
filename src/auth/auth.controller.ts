@@ -4,7 +4,6 @@ import { AuthService } from './auth.service';
 import { RegisterClientDto } from './dto/register-client.dto';
 import { LoginClientDto } from './dto/login-client.dto';
 import { RegisterBrokerDto } from './dto/register-broker.dto';
-import { RegisterProviderDto } from './dto/register-provider.dto';
 
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth-guard';
@@ -82,23 +81,4 @@ export class AuthController {
     return this.authService.approveBroker(id);
   }
 
-  @Post('register/provider')
-  @UsePipes(ValidationPipe)
-  async registerProvider(@Body() registerDto: RegisterProviderDto) {
-    return this.authService.registerProvider(registerDto);
-  }
-
-  @Post('login/provider')
-  async loginProvider(@Body() loginDto: any) {
-    const provider = await this.authService.validateProvider(loginDto.email, loginDto.password);
-    if (!provider) {
-      throw new UnauthorizedException('Invalid credentials or not approved');
-    }
-    return this.authService.loginProvider(provider);
-  }
-
-  @Patch(':id/approve/provider')
-  async approveProvider(@Param('id') id: number) {
-    return this.authService.approveProvider(id);
-  }
 }
