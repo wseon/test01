@@ -38,7 +38,7 @@ export class ContractController {
 
   @ApiOperation({ summary: 'Create a contract for a client' })
   @ApiBearerAuth()
-  @Post('create')
+  @Post()
   @Roles('broker')
   async createContract(
     @Req() req: ExpressRequest,

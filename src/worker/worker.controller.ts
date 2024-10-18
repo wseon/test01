@@ -39,7 +39,7 @@ export class WorkerController {
     return this.workerService.deleteWorker(workerId);
   }
 
-  @ApiOperation({ summary: 'Get all workers for a provider' })
+  @ApiOperation({ summary: 'Get all workers for a broker' })
   @ApiBearerAuth()
   @Get()
   @Roles('broker')

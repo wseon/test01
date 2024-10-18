@@ -8,66 +8,60 @@ import { RegisterBrokerDto } from './dto/register-broker.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth-guard';
 import { Client } from './entities/client.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('test')
-  test() {
-    return true
-  }
-
-  @Post('register/client')
+  @ApiOperation({ summary: 'Create a new client by email' })
+  @Post('register/client/email')
   async registerClient(@Body() registerClientDto: RegisterClientDto): Promise<Client> {
     return this.authService.registerClient(registerClientDto);
   }
 
-  @Post('login/client')
-  async loginClient(@Body() loginClientDto: LoginClientDto): Promise<{ accessToken: string }> {
-    return this.authService.loginClient(loginClientDto);
-  }
-
-  @Get('google')
+  @ApiOperation({ summary: 'Create a new client by google' })
+  @Get('register/client/google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {
 
   }
 
-  @Get('google/callback')
+  @Get('register/client/google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
     return this.authService.googleLogin(req);
   }
 
-  @Get('kakao')
+  @ApiOperation({ summary: 'Create a new client by kakao' })
+  @Get('register/client/kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuth(@Req() req) {
 
   }
 
-  @Get('kakao/callback')
+  @Get('register/client/kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuthRedirect(@Req() req) {
     return this.authService.kakaoLogin(req);
   }
 
-  @Delete('delete/client')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteAccount(@Req() req) {
-    await this.authService.deleteClientAccount(req.user.id);
-  }
-
-  @Post('register/broker')
+  @ApiOperation({ summary: 'Create a new broker by email' })
+  @Post('register/broker/email')
   @UsePipes(ValidationPipe)
   async registerBroker(@Body() registerDto: RegisterBrokerDto) {
     return this.authService.registerBroker(registerDto);
   }
 
-  @Post('login/broker')
+  @ApiOperation({ summary: 'Login client by email' })
+  @Post('login/client/email')
+  async loginClient(@Body() loginClientDto: LoginClientDto): Promise<{ accessToken: string }> {
+    return this.authService.loginClient(loginClientDto);
+  }
+
+  @ApiOperation({ summary: 'Login broker by email' })
+  @Post('login/broker/email')
   async loginBroker(@Body() loginDto: any) {
     const broker = await this.authService.validateBroker(loginDto.email, loginDto.password);
     if (!broker) {
@@ -76,6 +70,15 @@ export class AuthController {
     return this.authService.loginBroker(broker);
   }
 
+  @ApiOperation({ summary: 'Delete client' })
+  @Delete('delete/client')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteAccount(@Req() req) {
+    await this.authService.deleteClientAccount(req.user.id);
+  }
+
+  @ApiOperation({ summary: 'Approve broker' })
   @Patch(':id/approve/broker')
   async approveBroker(@Param('id') id: number) {
     return this.authService.approveBroker(id);

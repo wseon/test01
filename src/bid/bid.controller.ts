@@ -30,7 +30,7 @@ export class BidController {
   @ApiOperation({ summary: 'Get all bids for a specific request' })
   @ApiBearerAuth()
   @Roles('client')
-  @Get('request/:requestId')
+  @Get(':requestId')
   async getBidsForRequest(@Req() req: ExpressRequest, @Param('requestId') requestId: number) {
     const clientId = req.user.id;
     return this.bidService.getBidsForRequest(clientId, requestId);

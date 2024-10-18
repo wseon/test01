@@ -18,7 +18,6 @@ export class RequestController {
   @Post()
   @Roles('client') // 클라이언트만 요청 가능
   async createRequest(@Req() req: ExpressRequest, @Body() createRequestDto: CreateRequestDto) {
-    console.log('DDDD')
     const clientId = req.user.id; // JWT를 통해 인증된 클라이언트 ID 가져오기
     return this.requestService.createRequest(clientId, createRequestDto);
   }
@@ -36,7 +35,7 @@ export class RequestController {
   @ApiOperation({ summary: 'Get all requests for a broker' })
   @ApiBearerAuth() // JWT 인증 필요
   // 브로커의 요청서 목록 조회 (나에게 맡겨진 목록)
-  @Get('assigned')
+  @Get('broker')
   @Roles('broker')
   async getBrokerRequests(@Req() req: ExpressRequest) {
     const brokerId = req.user.id;
@@ -52,7 +51,7 @@ export class RequestController {
     return this.requestService.getPublicRequests();
   }
 
-  // 요청 변경
+  // 요청 변경- 사용하지 않음
   @ApiOperation({ summary: 'Update a request' })
   @ApiBearerAuth()
   @Patch(':id')
